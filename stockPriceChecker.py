@@ -1,20 +1,19 @@
-from time import sleep
+import time
+import datetime
 import creds
 import SMS
 from yahoo_fin import stock_info as si
 
-stockTargets = {
-    "aapl": 307,
-    "amzn": 1815,
-    "msft": 158,
-    "fb": 210,
-    "goog": 1420,
-    "ibm": 135,
-    "tsla": 550,
-    "intc": 60,
-    "amd": 45
+start = datetime.time(9, 30, 0)
+end = datetime.time(16, 30, 0)
 
-}
+
+def time_in_range(start, end, x):
+    """Return true if x is in the range [start, end]"""
+    if start <= end:
+        return start <= x <= end
+    else:
+        return start <= x or x <= end
 
 
 def check_price():
@@ -50,24 +49,6 @@ def check_price():
     """.format(appl=appl, amzn=amzn, msft=msft, fb=fb, goog=goog, ibm=ibm, tsla=tsla,
                intel=intel, amd=amd)
 
-    fullStocksUpdate = """ 
-    Hello, here are the current stock prices:
-        Apple: {appl}
-        Amazon: {amzn}
-        Microsoft: {msft}
-        Facebook: {fb}
-        Google: {goog}
-        IBM: {ibm}
-        Tesla: {tsla}
-        Intel: {intel}
-        AMD:{amd}
-    
-    Most active: \n {active}
-    Biggest Gainers: \n {gainers}
-    Biggest Losers: \n {losers}
-    
-    """.format(appl=appl, amzn=amzn, msft=msft, fb=fb, goog=goog, ibm=ibm, tsla=tsla,
-               intel=intel, amd=amd, active=active, gainers=gainers, losers=losers)
     msg = f"Subject: {'Stock Prices'}\n\n{stocksUpdate}"
     SMS.send(msg)
     print(stocksUpdate)
@@ -85,5 +66,10 @@ def check_price():
 #     print(x + " "+str(stockTargets[x]))
 
 while True:
-    check_price()
-    sleep(30*60)
+    now = datetime.datetime.now().time()
+    if time_in_range(start, end, now):
+        check_price()
+        time.sleep(60*60)
+    else:
+        print('TEST')
+        time.sleep(30*60)
