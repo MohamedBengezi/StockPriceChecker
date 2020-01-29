@@ -56,7 +56,7 @@ def check_price():
 while True:
     # check if current time is within business hours
     now = datetime.datetime.now().time()
-    if not time_in_range(start, end, now):
+    if time_in_range(start, end, now):
         check_price()
         time.sleep(60*60)
 
